@@ -1,0 +1,11 @@
+PWD c:\Users\Q\Documents\GitHub\TimeStrike\chapters\AdditionalCharacterInfo
+INPUT C:\Users\Q\AppData\Local\MiKTeX\miktex\data\le\pdftex\pdflatex.fmt
+INPUT c:\Users\Q\Documents\GitHub\TimeStrike\chapters\AdditionalCharacterInfo\AdditionalCharacterInfo.tex
+OUTPUT AdditionalCharacterInfo.log
+INPUT C:\Users\Q\AppData\Local\Programs\MiKTeX\tex\latex\subfiles\subfiles.cls
+INPUT C:\Users\Q\AppData\Local\Programs\MiKTeX\tex\latex\subfiles\subfiles.cls
+INPUT C:\Users\Q\AppData\Local\Programs\MiKTeX\tex\latex\import\import.sty
+INPUT C:\Users\Q\AppData\Local\Programs\MiKTeX\tex\latex\import\import.sty
+INPUT ..\..\main.tex
+INPUT ..\..\main.tex
+INPUT ..\..\main.tex

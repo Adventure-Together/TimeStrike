@@ -1,0 +1,90 @@
+\ExplSyntaxOn
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Package Dependencies
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Helps prevent option clash with other packages that include xcolor
+\PassOptionsToPackage {table} {xcolor}
+
+\RequirePackage {array}
+\RequirePackage {colortbl}
+\RequirePackage {enumitem}
+\RequirePackage {etoolbox}
+\RequirePackage {textcomp,gensymb} % degree symbol for italian ordinals
+\RequirePackage {hang} % hanging paragraphs
+\RequirePackage [autolanguage] {numprint} % localization of thousands separator
+\RequirePackage {tabularx} % variable-width table columns
+\RequirePackage [breakable,skins,xparse]{tcolorbox} % styled text boxes
+\RequirePackage {tikz} % drawing ornaments and lines
+\RequirePackage {xcolor}
+\RequirePackage {xparse} % \NewDocumentCommand and expl3
+
+\sys_if_engine_luatex:T
+  {
+    \RequirePackage {luacolor}
+  }
+
+\bool_if:NT \l__TimeStrike_layout_bool
+  {
+    \RequirePackage {geometry}
+    \RequirePackage {microtype} % Improve ragged2e hyphenation and overfull boxes
+    \RequirePackage {ragged2e}
+    \RequirePackage [titles] {tocloft} % multi-column toc
+    \RequirePackage {titlesec}  % Used to adjust (sub)section formatting
+
+    \bool_if:NT \l__TimeStrike_multitoc_bool
+      { \RequirePackage [toc] {multitoc} }
+
+    % Set page geometry.
+    \geometry
+      {
+        hmargin   = .75in, % Left and right margins
+        top       = .46in, % Top of text area to top of page
+        bottom    = .8in,  % Bottom of text area to bottom of page
+        footskip  = .32in, % Bottom of text area to bottom of footer text
+        columnsep = .33in, % Space between columns
+      }
+
+    % Set paragraph and line spacing
+    \setlength {\parindent}            {1em}
+    \setlength {\RaggedRightRightskip} {0pt plus 1em}
+    \setlength {\RaggedRightParindent} {\parindent}
+
+    % Restrict hyphenation
+    \tolerance        = 1
+    \emergencystretch = \maxdimen
+    \hyphenpenalty    = 10000
+    \hbadness         = 10000
+
+    % Set left justification if not justified
+    \bool_if:NF \l__TimeStrike_justified_bool
+      { \RaggedRight }
+
+    % Customize itemize environment.
+    \setlist{leftmargin=1em}
+    \setitemize{noitemsep,topsep=0.5ex}
+    \renewcommand{\labelitemi}{\raisebox{0.25ex}{\tiny{\( \bullet \)}}}
+  }
+
+% Load other modules of this package after all dependencies to avoid load order
+% conflicts (e.g., package options).
+% Low-level modules first.
+\RequirePackage {lib/compat}        % compatibility definitions
+\RequirePackage {lib/TimeStrikeutility}    % utility functions
+\RequirePackage {lib/TimeStrikecolors}     % color definitions
+\RequirePackage {lib/TimeStrikefonts}      % font definitions
+\RequirePackage {lib/TimeStrikestrings}    % Load document strings
+
+% Conditionally load deprecated code for backwards compatibility
+\bool_if:NF \l__TimeStrike_no_deprecated_code_bool
+  { \RequirePackage {lib/TimeStrikedeprecated} }
+
+% Main modules in alphabetical order
+\RequirePackage {lib/TimeStrikecomment}    % inline comment boxes
+\RequirePackage {lib/TimeStrikeheader}     % fancy headers and footers
+\RequirePackage {lib/TimeStrikemonster}    % stat blocks
+\RequirePackage {lib/TimeStrikereadaloud}  % read-aloud text
+\RequirePackage {lib/TimeStrikesections}   % section styling and special section headers
+\RequirePackage {lib/TimeStrikesidebar}    % sidebars
+\RequirePackage {lib/TimeStriketable}      % tables

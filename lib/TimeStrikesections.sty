@@ -1,0 +1,234 @@
+\ExplSyntaxOn
+
+\bool_if:NT \l__TimeStrike_layout_bool
+{
+% Set spacing around floats
+\setlength{\textfloatsep}{11pt plus 4pt minus 4pt}
+\setlength{\intextsep}{11pt plus 4pt minus 4pt}
+\setlength{\dbltextfloatsep}{11pt plus 4pt minus 4pt}
+
+% Remove Numbering (If you want Numbering set secnumdepth to the appropriate depth)
+\setcounter{secnumdepth}{0}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Section formatting
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Chapter
+\titleformat {\chapter}
+  { \TimeStrikeFontChapter } % format
+  { \chaptertitlename\ \thechapter : } % label
+  { \wordsep } % sep
+  {} % before-code
+
+\titlespacing* {\chapter}
+  { 0pt }  % left
+  { .3ex }  % before-sep
+  { 2.8ex } % after-sep
+
+% Section
+\titleformat {\section}
+  { \TimeStrikeFontSection } % format
+  { \thesection } % label
+  { 1em } % sep
+  { \nopagebreak } % before-code
+
+\titlespacing* { \section }
+  { 0pt } % left
+  { 1.3ex plus .43ex } % before-sep
+  { 0pt } % after-sep
+
+% Subsection
+\titleformat {\subsection}
+  { \TimeStrikeFontSubsection } % format
+  { \thesubsection } % label
+  { 1em } % sep
+  { \nopagebreak } % before-code
+  [ \vspace{-.3ex} \titleline{ \color{titlegold} \titlerule[1pt] } ] % after-code
+
+\titlespacing*{ \subsection }
+  { 0pt } % left
+  { 1.4ex plus .47ex } % before-sep
+  { 1.2ex } % after-sep
+
+% Subsubsection
+\titleformat {\subsubsection}
+  { \TimeStrikeFontSubsubsection } % format
+  { \thesubsubsection } % label
+  { 1em } % sep
+  { \nopagebreak } % before-code
+
+\titlespacing* { \subsubsection }
+  { 0pt } % left
+  { 2ex plus .67ex } % before-sep
+  { .2ex } % after-sep
+
+% Paragraph
+\titleformat {\paragraph} [runin]
+  { \TimeStrikeFontParagraph } % format
+  { \theparagraph \quad } % label
+  {0pt} % sep
+  {}    % before-code
+  [.]   % after-code
+
+\titlespacing* {\paragraph}
+  {0pt}      % left
+  {\parskip} % before-sep
+  {\wordsep} % after-sep
+
+% Subparagraph
+\titleformat {\subparagraph} [runin]
+  { \TimeStrikeFontSubaragraph } % format
+  { \thesubparagraph \quad } % label
+  {0pt} % sep
+  {}    % before-code
+  [.]   % after-code
+
+\titlespacing* {\subparagraph}
+  {\parindent} % left
+  {\parskip}   % before-sep
+  {\wordsep}   % after-sep
+
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Special command for magic items, traps, and the like.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\NewDocumentCommand {\TimeStrikeFeatHeader} { m o }
+  {
+    \subsection {#1}
+    \IfValueT{#2}
+      {
+        \textit {#2}
+        \par \vspace{3pt} \noindent \ignorespaces
+      }
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Special command for magic items, traps, and the like.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\NewDocumentCommand {\TimeStrikeItemHeader} { m m }
+  {
+    \subsubsection {#1}
+    \textit {#2}
+    \par \vspace{3pt} \noindent \ignorespaces
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Special command for spells.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% #1 - Name
+% #2 - Level and school
+% #3 - Casting time
+% #4 - Range
+% #5 - Components
+% #6 - Duration
+\NewDocumentCommand {\TimeStrikeSpellHeader} { m m m m m m }
+  {
+    \TimeStrikeItemHeader {#1} {#2}
+
+    \begin{description}
+      [
+        nosep,
+        labelsep = \l__TimeStrike_space_dim,
+        after    = { \vspace{4pt plus 1pt minus 1pt} },
+      ]
+      \item [ \spellcastingtimename : ] #3
+      \item [ \spellrangename       : ] #4
+      \item [ \spellcomponentsname  : ] #5
+      \item [ \spelldurationname    : ] #6
+    \end{description}
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Map Areas and their References
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tl_new:N \l__TimeStrike_area_num_depth_tl
+
+% Options
+\keys_define:nn { TimeStrike / areas }
+  {
+    area-label .tl_set:N          = \l__TimeStrike_area_label_tl,
+    area-label .initial:n         = area,
+    area-label .value_required:n  = true,
+    sub-area-label .tl_set:N          = \l__TimeStrike_sub_area_label_tl,
+    sub-area-label .initial:n         = subarea,
+    sub-area-label .value_required:n  = true,
+    region .tl_set:N          = \l__TimeStrike_region_tl,
+    region .value_required:n  = true,
+    area-num-depth .choice:,
+    area-num-depth .choices:nn =
+      { 1, 2, 3, 4 }
+      { \tl_set:Nn \l__TimeStrike_area_num_depth_tl {\l_keys_choice_tl} },
+    area-num-depth .initial:n  = 2, % subsection
+  }
+
+\NewDocumentCommand {\TimeStrikeSetAreaOptions} {o}
+  {
+    \keys_set:nn { TimeStrike / areas } { #1 }
+  }
+
+% Counters
+\newcounter {TimeStrikeAreaCounter}
+
+\NewDocumentCommand {\TimeStrikeResetAreas} {}
+  {
+    \setcounter {TimeStrikeAreaCounter} {0}
+  }
+
+\newcounter {TimeStrikeSubAreaCounter} [TimeStrikeAreaCounter]
+
+% sub area references should be '5a', '5b', not '51', '52'
+\renewcommand \p@TimeStrikeSubAreaCounter { \arabic {TimeStrikeAreaCounter} }
+\renewcommand \theTimeStrikeSubAreaCounter { \alph {TimeStrikeSubAreaCounter} }
+
+% Functions to create an area including text and label
+\NewDocumentCommand {\TimeStrikeArea} {m}
+  {
+    \refstepcounter {TimeStrikeAreaCounter}
+    \label { \l__TimeStrike_region_tl \l__TimeStrike_area_label_tl :#1 }
+
+    \tl_set:Nn \l_tmpa_tl { \l__TimeStrike_region_tl \arabic {TimeStrikeAreaCounter} . ~ #1 }
+
+    \str_case_e:nn {\l__TimeStrike_area_num_depth_tl}
+      {
+        {1} { \section       {\l_tmpa_tl} }
+        {2} { \subsection    {\l_tmpa_tl} }
+        {3} { \subsubsection {\l_tmpa_tl} }
+        {4} { \paragraph     {\l_tmpa_tl} }
+      }
+  }
+
+\NewDocumentCommand {\TimeStrikeSubArea} {m}
+  {
+    \refstepcounter {TimeStrikeSubAreaCounter}
+    \label { \l__TimeStrike_region_tl \l__TimeStrike_sub_area_label_tl : #1 }
+
+    \tl_set:Nn \l_tmpa_tl { \l__TimeStrike_region_tl \arabic {TimeStrikeAreaCounter} \alph {TimeStrikeSubAreaCounter} . ~ #1 }
+
+    \str_case_e:nn {\l__TimeStrike_area_num_depth_tl}
+      {
+        {1} { \subsection    {\l_tmpa_tl} }
+        {2} { \subsubsection {\l_tmpa_tl} }
+        {3} { \paragraph     {\l_tmpa_tl} }
+        {4} { \subparagraph  {\l_tmpa_tl} }
+      }
+
+  }
+
+% Functions to reference a label
+\NewDocumentCommand {\TimeStrikeAreaRef} { o m }
+  {
+    \group_begin:
+      \keys_set:nn { TimeStrike / areas } {#1} % Temp set keys to reference other regions
+      #2 ~ ( \pageabbreviationname\ \pageref { \l__TimeStrike_region_tl \l__TimeStrike_area_label_tl : #2 } )
+    \group_end:
+  }
+
+\NewDocumentCommand {\TimeStrikeSubAreaRef} { o m }
+  {
+    \group_begin:
+      \keys_set:nn { TimeStrike / areas } { #1 } % Temp set keys to reference other regions
+      #2 ~ ( \pageabbreviationname\ \pageref { \l__TimeStrike_region_tl \l__TimeStrike_sub_area_label_tl : #2 } )
+    \group_end:
+  }

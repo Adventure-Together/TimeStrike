@@ -1,0 +1,48 @@
+\ExplSyntaxOn
+
+% Centered Column
+\newcolumntype { Y }
+  { > { \centering \arraybackslash } X }
+
+% Table options
+\keys_define:nn { TimeStrike / table }
+  {
+    color .tl_set:N         = \l__TimeStrike_table_color_tl,
+    color .initial:n        = tablecolor,
+    color .value_required:n = true,
+    header .tl_set:N         = \l__TimeStrike_table_header_tl,
+    header .value_required:n = true,
+    width .dim_set:N        = \l__TimeStrike_table_width_dim,
+    width .value_required:n = true,
+  }
+
+  % Table Definition
+  \NewDocumentEnvironment {TimeStrikeTable} { o m }
+  {
+    \group_begin:
+
+    \dim_set:Nn \l__TimeStrike_table_width_dim { \linewidth }
+    \tl_if_novalue:nF {#1}
+      { \keys_set:nn { TimeStrike / table } {#1} }
+
+    \par \vspace { 9pt plus 3pt minus 3pt } \noindent
+
+    \tl_if_empty:NF \l__TimeStrike_table_header_tl
+      {
+        \group_begin:
+          \TimeStrikeFontTableTitle \l__TimeStrike_table_header_tl \nopagebreak
+          \par \vspace{ 5pt plus 2pt minus 2pt } \noindent
+        \group_end:
+      }
+
+    \TimeStrikeFontTableBody
+
+    \rowcolors {1} {} {\l__TimeStrike_table_color_tl}
+
+    \tabularx {\l__TimeStrike_table_width_dim} {#2}
+  }
+  {
+    \endtabularx \vspace { 12pt plus 4pt minus 4pt }
+
+    \group_end:
+  }

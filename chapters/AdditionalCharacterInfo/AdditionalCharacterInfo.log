@@ -1,0 +1,39 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.10.12) (preloaded format=pdflatex 2023.11.11)  11 NOV 2023 18:16
+entering extended mode
+ restricted \write18 enabled.
+ file:line:error style messages enabled.
+ %&-line parsing enabled.
+**c:/Users/Q/Documents/GitHub/TimeStrike/chapters/AdditionalCharacterInfo/AdditionalCharacterInfo.tex
+(c:/Users/Q/Documents/GitHub/TimeStrike/chapters/AdditionalCharacterInfo/AdditionalCharacterInfo.tex
+LaTeX2e <2023-11-01>
+L3 programming layer <2023-11-01>
+(C:\Users\Q\AppData\Local\Programs\MiKTeX\tex/latex/subfiles\subfiles.cls
+Document Class: subfiles 2020/11/14 v2.2 Multi-file projects (class)
+Preamble taken from file `../main.tex'
+(C:\Users\Q\AppData\Local\Programs\MiKTeX\tex/latex/import\import.sty
+Package: import 2020/04/01  v 6.2
+) (../../main.tex
+
+! LaTeX Error: File `TimeStrikebook.cls' not found.
+
+Type X to quit or <RETURN> to proceed,
+or enter new name. (Default extension: cls)
+
+Enter file name: 
+../../main.tex:2: Emergency stop.
+<read *> 
+         
+l.2 ^^M
+       
+*** (cannot \read from terminal in nonstop modes)
+
+ 
+Here is how much of TeX's memory you used:
+ 90 strings out of 474592
+ 2319 string characters out of 5747686
+ 1923533 words of memory out of 5000000
+ 22354 multiletter control sequences out of 15000+600000
+ 558069 words of font info for 36 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 46i,0n,61p,233b,20s stack positions out of 10000i,1000n,20000p,200000b,200000s
+../../main.tex:2:  ==> Fatal error occurred, no output PDF file produced!

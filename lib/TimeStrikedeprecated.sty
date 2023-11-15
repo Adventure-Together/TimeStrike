@@ -1,0 +1,620 @@
+\RequirePackage {keycommand}
+
+\ExplSyntaxOn
+\NewDocumentCommand{\TimeStrikeDeprecate}{ mmm }
+  {
+    \__TimeStrike_deprecated:nnn {#1} {#2} {#3}
+  }
+\ExplSyntaxOff
+
+% Either hilariously, or infuriatingly, the \ifcommandkey
+% implementation is buggy. Here is a re-implementation
+% from tex.stackexchange.
+\begingroup
+  \makeatletter
+  \catcode`\/=8 %
+  \@firstofone
+    {
+      \endgroup
+      \renewcommand{\ifcommandkey}[1]{%
+        \csname @\expandafter \expandafter \expandafter
+        \expandafter \expandafter \expandafter  \expandafter
+        \kcmd@nbk \commandkey {#1}//{first}{second}//oftwo\endcsname
+      }
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TimeStrikecolors.sty - to be removed in version 1.0.0
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Sets the themecolor and colors for all themed elements
+% If called without the optional color, resets the color of all themed elements to the current themecolor
+\newcommand{\setthemecolor}[1][themecolor]{%
+  \TimeStrikeDeprecate{\noexpand\setthemecolor}{1.0.0}{Use \noexpand\TimeStrikeSetThemeColor to set the theme color.}%
+  \colorlet{themecolor}{#1}
+  \colorlet{commentcolor}{#1}
+  \colorlet{sidebarcolor}{#1}
+  \colorlet{tablecolor}{#1}
+}
+
+% Backwards-compatible aliases and colours
+\colorlet {commentgreen}  {PhbLightGreen}
+\colorlet {itemtablepink} {DmgCoral}
+\colorlet {monstertan}    {statblockbg}
+\definecolor {monstertandark} {HTML} {F0DBB5}
+
+% Old interface
+\colorlet {commentboxcolor} {commentcolor}
+\colorlet {paperboxcolor}   {sidebarcolor}
+\colorlet {quoteboxcolor}   {readaloudcolor}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TimeStrikecomment.sty - to be removed in version 1.0.0
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Usage \begin{commentbox}[options]{title}[color]
+\ExplSyntaxOn
+\DeclareTColorBox{commentbox}{O{} m O{commentboxcolor}}{%
+  before~upper={%
+    \bool_if:NT \l__TimeStrike_layout_bool
+      {
+        \bool_if:NF \l__TimeStrike_justified_bool
+          { \RaggedRight }
+      }
+  },
+  code={\TimeStrikeDeprecate{\noexpand\commentbox}{1.0.0}{Use~\noexpand\TimeStrikeComment~for~breakable~comment~boxes.}\linespread{.9}},
+  frame~hidden,
+  boxrule=0pt,
+  breakable,
+  enhanced,
+  before~skip=13pt plus 4pt minus 4pt,
+  toptitle=2pt,
+  boxsep=3pt,
+  left=6pt,
+  right=6pt,
+  top=0pt,
+  bottom=2pt,
+  sharp~corners,
+  fonttitle=\TimeStrikeFontCommentTitle,
+  fontupper=\TimeStrikeFontCommentBody,
+  fontlower=\TimeStrikeFontCommentBody,
+  title={#2},
+  parbox=false,
+  colback=#3,
+  colbacktitle=#3,
+  coltitle=black,
+  after~skip=13pt plus 4pt minus 4pt,
+  #1
+}
+\ExplSyntaxOff
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TimeStrikemonster.sty - to be removed in version 1.0.0
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Fancy TimeStrike 5e stat block rule
+\newcommand{\TimeStrikeline}{%
+  \TimeStrikeDeprecate{\noexpand\TimeStrikeline}{1.0.0}{Use \noexpand\TimeStrikeMonsterLine for stat block rules.}%
+  \noindent
+  \begin{tikzpicture}[]
+    \draw [rulered, fill=rulered] (0, 0) --(0,0.1) -- (\textwidth, 0.05);
+  \end{tikzpicture}%
+  \par%
+}
+
+\RequirePackage{fp}
+\RequirePackage{xstring}
+
+% Macro to print stats with auto-computed modifier
+% e.g. \stat{12} prints "12 (+1)"
+\newcommand{\stat}[1]{%
+  \TimeStrikeDeprecate{\noexpand\stat}{1.0.0}{Use \noexpand\TimeStrikeMonsterAbilityScores for the stat block ability score table.}%
+  \FPeval{\mod}{(#1 - 10)/2}%
+  \FPifpos\mod%
+  \FPeval{\mod}{clip(trunc(mod,0))}#1\ (+\mod)%
+  \else%
+  \FPeval{\mod}{clip(abs(trunc(mod-0.5,0)))}#1\ (--\mod)%
+  \fi%
+}
+
+% Macro to print avarage dice based value
+% e.g. \dice{2d6+3} prints "10 (2d6 + 3)"
+\newcommand{\dice}[1]{%
+  \TimeStrikeDeprecate{\noexpand\dice}{1.0.0}{Use \noexpand\TimeStrikeDice to typeset a dice roll with the average value.}%
+  \StrSubstitute{#1}{ }{}[\DiceArg]%				strip whitespaces
+  \StrCut{\DiceArg}{d}\DiceNum\DiceSides%			split string
+  \StrCut{\DiceSides}{+}\DiceSides\DiceAddMod%
+  \StrCut{\DiceSides}{-}\DiceSides\DiceSubMod%
+  \FPeval{\DiceAvg}{(\DiceSides+1)/2*\DiceNum}%	calculate avg roll
+  \IfInteger{\DiceAddMod}{%
+    \FPadd{\DiceAvg}{\DiceAvg}{\DiceAddMod}%	add value
+    \def\DiceMod{ + \DiceAddMod}%
+  }{%
+    \IfInteger{\DiceSubMod}{%
+      \FPsub{\DiceAvg}{\DiceAvg}{\DiceSubMod}%	subtract value
+      \def\DiceMod{ -- \DiceSubMod}%
+    }{%
+      \def\DiceMod{}%
+    }%
+  }%
+  \FPtrunc{\DiceAvg}{\DiceAvg}{0}%				round down
+  \FPprint{\DiceAvg\ (\DiceNum \dname\DiceSides\DiceMod)}%
+}
+
+% Stat block without the background
+\newtcolorbox{monsterboxnobg}[2][]{
+  enhanced,
+  code={\TimeStrikeDeprecate{\noexpand\monsterboxnobg}{1.0.0}{Use \noexpand\TimeStrikeMonsterNoBg for stat blocks without a background.}},
+  frame hidden,
+  boxrule=0pt,
+  breakable,
+  parbox=false,
+  boxsep=0pt,
+  toptitle=3mm,
+  left=0pt,
+  right=0pt,
+  sharp corners,
+  opacityback=0,
+  colframe=titlered,
+  fonttitle=\TimeStrikeFontStatBlockTitle,
+  fontupper=\TimeStrikeFontStatBlockBody,
+  fontlower=\TimeStrikeFontStatBlockBody,
+  title=#2,
+  coltitle=titlered,
+  #1
+}
+
+% Stat block with background
+\newtcolorbox{monsterboxbg}[2][]{
+  enhanced,
+  code={\TimeStrikeDeprecate{\noexpand\monsterboxbg}{1.0.0}{Use \noexpand\TimeStrikeMonsterBg for stat blocks with a background.}},
+  frame hidden,
+  before skip=12pt plus 3pt minus 3pt,
+  boxrule=0pt,
+  breakable,
+  parbox=false,
+  boxsep=2pt,
+  toptitle=8pt,
+  top=0pt,
+  left=2pt,
+  right=2pt,
+  bottom=7pt,
+  sharp corners,
+  oversize=0pt,
+  borderline north={3pt}{0pt}{titlered},
+  borderline north={2pt}{0.5pt}{statblockribbon},
+  borderline south={3pt}{0pt}{titlered},
+  borderline south={2pt}{0.5pt}{statblockribbon},
+  colback=statblockbg,
+  colbacktitle=statblockbg,
+  colframe=titlered,
+  fonttitle=\TimeStrikeFontStatBlockTitle,
+  coltitle=titlered,
+  fontupper=\TimeStrikeFontStatBlockBody,
+  fontlower=\TimeStrikeFontStatBlockBody,
+  title=#2,
+  #1
+}
+
+\ExplSyntaxOn
+\bool_if:NTF \l__TimeStrike_show_background_bool
+  {
+    \let\monsterbox\monsterboxbg%
+    \let\endmonsterbox\endmonsterboxbg%
+  }
+  {
+    \let\monsterbox\monsterboxnobg%
+    \let\endmonsterbox\endmonsterboxnobg%
+  }
+
+\ExplSyntaxOff
+
+% Define Monster subsection header style
+\newcommand{\monstersection}[1]{%
+  \TimeStrikeDeprecate{\noexpand\monstersection}{1.0.0}{Use \noexpand\TimeStrikeMonsterSection for stat blocks sections.}%
+  \begingroup
+    \par\medskip\noindent
+    \TimeStrikeFontStatBlockSection #1
+    % \rule is a horizontal command, so placing it under the title incurs extra
+    % line spacing. Use \hrule (a vertical command) instead.
+    \vspace{3pt}
+    \hrule height 0.6pt
+    \vspace{2pt}
+  \endgroup%
+}
+
+\NewDocumentEnvironment{monsteraction}{o}{%
+  \TimeStrikeDeprecate{\noexpand\monsteraction}{1.0.0}{Use \noexpand\TimeStrikeMonsterAction for stat block actions.}%
+  \IfValueTF{#1}{%
+    \par\medskip\noindent\emph{\textbf{#1.}}%
+  }{\unskip}%
+}{\par}
+
+% A description variant used to list creature attributes.
+\newlist{TimeStrike@monsterattrs}{description}{1}
+
+\ExplSyntaxOn
+
+\setlist[TimeStrike@monsterattrs]{
+  before=\color{titlered},
+  font=\TimeStrikeFontStatBlockBody,
+  labelsep=\l__TimeStrike_space_dim,
+  noitemsep,
+  nosep,
+}
+
+\ExplSyntaxOff
+
+% A TimeStrike@monsterattrs helper macro that always displays an attribute.
+\newcommand{\TimeStrike@monsterattr}[2]{%
+  \item[#2] \commandkey{#1}
+}
+
+% A TimeStrike@monsterattrs helper macro that displays an attribute if the user defined
+% it.
+\newcommand{\TimeStrike@ifmonsterattr}[2]{%
+  \ifcommandkey{#1}{%
+    \item[#2] \commandkey{#1}
+  }{}%
+}
+
+%
+% Macros for use within the monster environment
+%
+\newkeycommand\basics[armorclass=0, hitpoints=0, speed=0]{%
+  \TimeStrikeDeprecate{\noexpand\basics}{1.0.0}{Use \noexpand\TimeStrikeMonsterBasics for stat block AC, HP, and speed.}%
+  \begin{TimeStrike@monsterattrs}
+    \TimeStrike@monsterattr{armorclass}{\armorclassname}
+    \TimeStrike@monsterattr{hitpoints}{\hitpointsname}
+    \TimeStrike@monsterattr{speed}{\speedname}
+  \end{TimeStrike@monsterattrs}%
+}
+
+% Taubular enviornment for stats-block
+\newkeycommand\stats[%
+  STR=\stat{10},
+  DEX=\stat{10},
+  CON=\stat{10},
+  INT=\stat{10},
+  WIS=\stat{10},
+  CHA=\stat{10}]{%
+  \TimeStrikeDeprecate{\noexpand\stats}{1.0.0}{Use \noexpand\TimeStrikeMonsterAbilityScores for the stat block ability score table.}%
+  \begingroup%
+    \color{titlered}%
+    \par\vspace{5pt}\noindent%
+    \begin{tabularx}{\linewidth}{YYYYYY}
+      \textbf{\strstatname} &
+      \textbf{\dexstatname} &
+      \textbf{\constatname} &
+      \textbf{\intstatname} &
+      \textbf{\wisstatname} &
+      \textbf{\chastatname} \\
+      \commandkey{STR} &
+      \commandkey{DEX} &
+      \commandkey{CON} &
+      \commandkey{INT} &
+      \commandkey{WIS} &
+      \commandkey{CHA}
+    \end{tabularx}%
+    \par\vspace{4pt}%
+  \endgroup%
+}
+
+\newkeycommand\details[
+  skills=,
+  damageimmunities=,
+  savingthrows=,
+  conditionimmunities=,
+  damageresistances=,
+  damagevulnerabilities=,
+  senses=---,
+  languages=---,
+  challenge=1,
+  ]{%
+  \TimeStrikeDeprecate{\noexpand\details}{1.0.0}{Use \noexpand\TimeStrikeMonsterDetails for stat block details like resistances and CR.}%
+  \begin{TimeStrike@monsterattrs}
+    \TimeStrike@ifmonsterattr{savingthrows}{\savesname}
+    \TimeStrike@ifmonsterattr{skills}{\skillsname}
+    \TimeStrike@ifmonsterattr{damagevulnerabilities}{\dvulname}
+    \TimeStrike@ifmonsterattr{damageresistances}{\dresname}
+    \TimeStrike@ifmonsterattr{damageimmunities}{\dimmname}
+    \TimeStrike@ifmonsterattr{conditionimmunities}{\cimmname}
+    \TimeStrike@monsterattr{senses}{\sensesname}
+    \TimeStrike@monsterattr{languages}{\languagesname}
+    \item[\challengename] \TimeStrikeCRExp{\commandkey{challenge}}
+  \end{TimeStrike@monsterattrs}%
+}
+
+\ExplSyntaxOn
+\newcommand{\TimeStrike@hit}[1]{%
+  \__TimeStrike_caption:nn {\tohitname} {#1}
+}
+\ExplSyntaxOff
+
+\newcommand{\TimeStrike@damage}[2]{%
+  \commandkey{#1}\ \commandkey{#2}\ \damagename%
+}
+
+\newcommand{\TimeStrike@ifplusdmg}[2]{%
+  \ifcommandkey{#1}{%
+    { }\plusname\ \commandkey{#1}\ \commandkey{#2}\ \damagename%
+  }{}%
+}
+\newcommand{\TimeStrike@ifordmg}[5]{%
+  \ifcommandkey{#1}{%
+    , \orname\ \commandkey{#1}\ \commandkey{#2}\ \damagename\TimeStrike@ifplusdmg{#4}{#5}\ \commandkey{#3}%
+  }{}%
+}
+
+\newkeycommand+[\|]\monstermelee[
+    name=Club,
+    mod=+0,
+    reach=5,
+    targets=\defaulttargetsname,
+    dmg=\dice{1d4},
+    dmgtype=bludgeoning,
+    plusdmg=,
+    plusdmgtype=,
+    ordmg=,
+    ordmgwhen=,
+    extra=,
+  ]{%
+  |\monsterattack|[
+    name={\commandkey{name}},
+    type=melee,
+    mod={\commandkey{mod}},
+    reach={\commandkey{reach}},
+    targets={\commandkey{targets}},
+    dmg={\commandkey{dmg}},
+    dmgtype={\commandkey{dmgtype}},
+    plusdmg={\commandkey{plusdmg}},
+    plusdmgtype={\commandkey{plusdmgtype}},
+    ordmg={\commandkey{ordmg}},
+    ordmgwhen={\commandkey{ordmgwhen}},
+    extra={\commandkey{extra}},
+  ]
+}
+\newkeycommand+[\|]\monsterranged[
+    name=Shortbow,
+    mod=+0,
+    range=80/320,
+    targets=\defaulttargetsname,
+    dmg=\dice{1d6},
+    dmgtype=piercing,
+    plusdmg=,
+    plusdmgtype=,
+    ordmg=,
+    ordmgwhen=,
+    extra=,
+  ]{%
+  |\monsterattack|[
+    name={\commandkey{name}},
+    type=ranged,
+    mod={\commandkey{mod}},
+    range={\commandkey{range}},
+    targets={\commandkey{targets}},
+    dmg={\commandkey{dmg}},
+    dmgtype={\commandkey{dmgtype}},
+    plusdmg={\commandkey{plusdmg}},
+    plusdmgtype={\commandkey{plusdmgtype}},
+    ordmg={\commandkey{ordmg}},
+    ordmgwhen={\commandkey{ordmgwhen}},
+    extra={\commandkey{extra}},
+  ]
+}
+
+\newkeycommand\monsterattack[
+    name=Dagger,
+    enum* type={both,melee,ranged},
+    mod=+0,
+    reach=5,
+    range=20/60,
+    targets=\defaulttargetsname,
+    dmg=\dice{1d4},
+    dmgtype=piercing,
+    plusdmg=,
+    plusdmgtype=,
+    ordmg=,
+    ordmgwhen=,
+    extra=,
+  ]{%
+  \TimeStrikeDeprecate{\noexpand\monsterattack}{1.0.0}{Use \noexpand\TimeStrikeMonsterMelee, \noexpand\TimeStrikeMonsterRanged, or \noexpand\TimeStrikeMonsterAttack for attacks that are melee, ranged, or both, respectively.}%
+  \begin{monsteraction}[\commandkey{name}]
+    \IfStrEqCase{\commandkey{type}}{%
+      {melee}{\textit{\TimeStrikeCaption{\meleeattackname}{\weaponname}:} \TimeStrike@hit{mod}, \reachname\ \commandkey{reach} \unitsname}%
+      {ranged}{\textit{\TimeStrikeCaption{\rangedattackname}{\weaponname}:} \TimeStrike@hit{mod}, \rangename\ \commandkey{range} \unitsname}%
+      {both}{\textit{\TimeStrikeCaption{\meleeorrangedattackname}{\weaponname}:} \TimeStrike@hit{mod}, \reachname\ \commandkey{reach} \unitsname\ \orname\ \rangename\ \commandkey{range} \unitsname}%
+    }[]%
+    , \commandkey{targets}.
+    \textit{\hitname:} \TimeStrike@damage{dmg}{dmgtype}%
+    \TimeStrike@ifplusdmg{plusdmg}{plusdmgtype}%
+    \TimeStrike@ifordmg{ordmg}{dmgtype}{ordmgwhen}{plusdmg}{plusdmgtype}%
+    \ifcommandkey{extra}{\commandkey{extra}}{}.
+  \end{monsteraction}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TimeStrikepaperbox.sty - to be removed in version 1.0.0
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Usage \begin{paperbox}[options]{title}[color]
+\ExplSyntaxOn
+\DeclareTColorBox{paperbox}{O{} m O{paperboxcolor}}{%
+  before~upper={%
+    \bool_if:NT \l__TimeStrike_layout_bool
+      {
+        \bool_if:NF \l__TimeStrike_justified_bool
+          {\RaggedRight}
+      }
+  },
+  code={\TimeStrikeDeprecate{\noexpand\paperbox}{1.0.0}{Use \noexpand\TimeStrikeSidebar for sidebars.}\linespread{.9}},
+  frame~hidden,
+  boxrule=0pt,
+  enhanced,
+  before~skip=13pt plus 4pt minus 4pt,
+  toptitle=2pt,
+  boxsep=3pt,
+  left=6pt,
+  right=6pt,
+  top=0pt,
+  bottom=3pt,
+  fonttitle=\TimeStrikeFontSidebarTitle,
+  fontupper=\TimeStrikeFontSidebarBody,
+  fontlower=\TimeStrikeFontSidebarBody,
+  title={#2},
+  sharp~corners,
+  parbox=false,
+  borderline~north={1pt}{-0.5pt}{black},
+  borderline~south={1pt}{-0.5pt}{black},
+  colback=#3,
+  colbacktitle=#3,
+  coltitle=black,
+  fuzzy~shadow={0mm}{-3.5pt}{-0.5pt}{0.4mm}{black!60!white},
+  overlay={%
+    \fill[black] (frame.south~west) -- ++ (7pt,0) -- ++ (0,-5pt) -- cycle;
+    \fill[black] (frame.north~west) -- ++ (7pt,0) -- ++ (0,5pt) -- cycle;
+    \fill[black] (frame.north~east) -- ++ (-7pt,0) -- ++ (0,5pt) -- cycle;
+    \fill[black] (frame.south~east) -- ++ (-7pt,0) -- ++ (0,-5pt) -- cycle;
+    },
+  after~skip=14pt plus 4pt minus 4pt,
+  #1
+}
+\ExplSyntaxOn
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TimeStrikequote.sty - to be removed in version 1.0.0
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Usage \begin{quotebox}[options][color]
+\ExplSyntaxOn
+\DeclareTColorBox{quotebox}{O{} O{quoteboxcolor}}{%
+  before~upper={%
+    \bool_if:NT \l__TimeStrike_layout_bool
+      {
+        \bool_if:NF \l__TimeStrike_justified_bool
+          {\RaggedRight}
+      }
+  },
+  code={\TimeStrikeDeprecate{\noexpand\quotebox}{1.0.0}{Use~\noexpand\TimeStrikeReadAloud~for~read-aloud~text.}\linespread{1.1}},
+  enhanced~jigsaw,
+  frame~hidden,
+  boxrule=0pt,
+  breakable,
+  enhanced,
+  before~skip=13pt plus 4pt minus 4pt,
+  boxsep=8pt,
+  top=0pt,
+  left=0pt,
+  right=0pt,
+  bottom=0pt,
+  colback=#2,
+  sharp~corners,
+  parbox=false,
+  borderline~west={1pt}{-0.5pt}{titlered},
+  borderline~east={1pt}{-0.5pt}{titlered},
+  fontupper=\TimeStrikeFontReadAloud,
+  fontlower=\TimeStrikeFontReadAloud,
+  overlay={%
+    \foreach\n in {north~east,north~west,south~east,south~west}
+    {\draw[titlered, fill=titlered] (frame.\n) circle (1.5pt); }; },
+  after~skip=13pt plus 4pt minus 4pt,
+  #1
+}
+\ExplSyntaxOff
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TimeStrikesections.sty - to be removed in version 1.0.0
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Special command for magic items, traps, and the like.
+\newcommand{\subtitlesection}[2]{%
+  \TimeStrikeDeprecate{\noexpand\subtitlesection}{1.0.0}{Use \noexpand\TimeStrikeItemHeader for item headers.}%
+  \subsubsection{#1}%
+  \textit{#2}
+  \par\vspace{3pt plus 1pt minus 1pt}\noindent\ignorespaces}
+
+% Map Areas and their References
+
+% Labelling helpers
+\newcommand{\AreaLabel@Prefix}{area}
+\newcommand{\SetAreaLabelPrefix}[1]{%
+\renewcommand{\AreaLabel@Prefix}{#1}}
+
+\newcounter{Area}
+\newcommand\ResetAreas{%
+  \TimeStrikeDeprecate{\noexpand\ResetAreas}{1.0.0}{Use \noexpand\TimeStrikeResetAreas to reset area counters.}%
+  \setcounter{Area}{0}
+}
+
+\NewDocumentCommand\area{mo}{%
+  \TimeStrikeDeprecate{\noexpand\area}{1.0.0}{Use \noexpand\TimeStrikeArea to typeset a section with an area counter.}%
+  \refstepcounter{Area}%
+  \IfNoValueTF{#2}%
+    {\label{\AreaLabel@Prefix:#1}}%
+    {\label{\AreaLabel@Prefix:#2}}%
+  \subsection{\arabic{Area}. #1}%
+}
+
+% defines sub-areas, like '5a', '5b'
+\newcounter{SubArea}[Area]
+
+\NewDocumentCommand\subarea{mo}{%
+  \TimeStrikeDeprecate{\noexpand\subarea}{1.0.0}{Use \noexpand\TimeStrikeSubArea to typeset a section with an sub-area counter.}%
+  \refstepcounter{SubArea}%
+  \IfNoValueTF{#2}%
+    {\label{\AreaLabel@Prefix:#1}}%
+    {\label{\AreaLabel@Prefix:#2}}%
+  \subsubsection{\arabic{Area}\alph{SubArea}. #1}%
+}
+
+% sub area references should be '5a', '5b', not '1', '2'
+\renewcommand\p@SubArea{\arabic{Area}}
+\renewcommand\theSubArea{\alph{SubArea}}
+
+\newcounter{DetailArea}[subsection]
+\newcommand{\DetailArea@Prefix}{}
+\newcommand{\SetDetailAreaPrefix}[1]{\renewcommand{\DetailArea@Prefix}
+      {#1--\arabic{DetailArea}\par\expandafter\ignorespaces\noindent}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TimeStrikespell.sty - to be removed in version 1.0.0
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\spellheader}[6]{%
+  \TimeStrikeDeprecate{\noexpand\spellheader}{1.0.0}{Use \noexpand\TimeStrikeSpellHeader to typeset a spell header.}%
+  \subtitlesection{#1}{#2}
+  \begin{description}[noitemsep,nosep,after=\smallskip,leftmargin=1em]
+    \item[\spellcastingtimename:] #3
+    \item[\spellrangename:] #4
+    \item[\spellcomponentsname:] #5
+    \item[\spelldurationname:] #6
+  \end{description}
+}
+
+\newenvironment{spell}[6]
+  {\spellheader{#1}{#2}{#3}{#4}{#5}{#6}}
+  % Environment encloses description.
+{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TimeStriketable.sty - to be removed in version 1.0.0
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Table Header
+\newcommand{\header}[1]{%
+\begingroup%
+\par\vspace{10pt plus 3 pt minus 3pt}%
+\noindent%
+\TimeStrikeFontTableTitle%
+#1%
+\endgroup%
+}
+
+% Table Environment
+\NewDocumentEnvironment{TimeStriketable}{O{XX} O{tablecolor}}{%
+  \TimeStrikeDeprecate{\noexpand\TimeStriketable}{1.0.0}{Use \noexpand\TimeStrikeTable for tables.}%
+  \par\vspace{2pt plus 1pt minus 1pt}%
+  \noindent%
+  \TimeStrikeFontTableBody%
+  \setlength{\extrarowheight}{3pt}%
+  \rowcolors{1}{}{#2}%
+  \tabularx{\linewidth}{#1}%
+}{%
+  \endtabularx%
+  \par\vspace{10pt plus 3 pt minus 3pt}%
+}

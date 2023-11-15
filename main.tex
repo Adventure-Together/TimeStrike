@@ -1,0 +1,73 @@
+\documentclass[letterpaper,twocolumn,openany,nodeprecatedcode]{TimeStrikebook}
+
+% Use babel or polyglossia to automatically redefine macros for terms
+% Armor Class, Level, etc...
+% Default output is in English; captions are located in lib/TimeStrikestring-captions.sty.
+% If no captions exist for a language, English will be used.
+%1. To load a language with babel:
+%	\usepackage[<lang>]{babel}
+%2. To load a language with polyglossia:
+%	\usepackage{polyglossia}
+%	\setdefaultlanguage{<lang>}
+\usepackage[english]{babel}
+%\usepackage[italian]{babel}
+% For further options (multilanguage documents, hypenations, language environments...)
+% please refer to babel/polyglossia's documentation.
+
+\usepackage[utf8]{inputenc}
+\usepackage[singlelinecheck=false]{caption}
+\usepackage{lipsum}
+\usepackage{listings}
+\usepackage{shortvrb}
+\usepackage{stfloats}
+\usepackage{subfiles} % Best loaded last in the preamble
+\captionsetup[table]{labelformat=empty,font={sf,sc,bf,},skip=0pt}
+\usepackage{color}   %May be necessary if you want to color links
+\usepackage{hyperref}
+
+\newcommand\tsgap{\vspace{10pt}}
+
+\MakeShortVerb{|}
+
+\lstset{%
+  basicstyle=Neutra Text Bold,
+  language=[LaTeX]{TeX},
+  breaklines=true,
+}
+
+\begin{document}
+
+\frontmatter
+\hypersetup{
+    colorlinks=false, %set true if you want colored links
+    linktoc=all,     %set to all if you want both sections and subsections linked
+    linkcolor=blue,  %choose some color if you want links to stand out
+}
+
+\tableofcontents
+
+\mainmatter%
+
+\subfile{chapters/introduction/introduction}
+\subfile{chapters/boardsetup/boardsetup}
+\subfile{chapters/generalInformation/generalInfo}
+\subfile{chapters/charactercard/charactercard}
+\subfile{chapters/Settingupacharactercard/SettingupHealthReferences}
+\subfile{chapters/Starting TimeStrike/DeterminingTurnOrder}
+\subfile{chapters/PlayerTurns/PlayerTurns}
+\subfile{chapters/Movement/Movement}
+\subfile{chapters/ActionsandEnergy/ActionsandEnergy}
+\subfile{chapters/TargetingandCombat/TargetingandCombat}
+\subfile{chapters/Skills/Skills}
+\subfile{chapters/AdditionalCharacterInfo/AdditionalCharacterInfo}
+\subfile{chapters/InventoryandGoods/InventoryandGoods}
+\subfile{chapters/Building/Building}
+\subfile{chapters/TheLost/TheLost}
+\subfile{chapters/Sentience/Sentience}
+\subfile{chapters/Monsters/Monsters}
+\subfile{chapters/Myth/Myth}
+\subfile{chapters/WinningtheGame/WinningtheGame}
+\subfile{chapters/Example/Example}
+
+
+\end{document}
