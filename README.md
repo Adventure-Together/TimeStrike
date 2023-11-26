@@ -1,7 +1,7 @@
 # TimeStrike Rules
 ## Features
 
-![plot](./img/source_ts_banner.png.png)
+![plot](./img/source_ts_banner.png)
 
 TimeStrike is an accessible miniatures wargame and Boss Battle Royale. With its first themed box set named Shadow of Fear, players will take turns managing a team of characters by moving them through the landscape and performing a variety of actions to survive the end of time and fight off a world boss.
 
