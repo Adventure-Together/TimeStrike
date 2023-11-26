@@ -9,15 +9,16 @@ A malignant Sentience has pulled you into the TimeStrike, a land of decaying uni
 
 At its core, TimeStrike is a game about the enduring, adaptable, and fierce nature of the human spirit. It’s a game about managing relationships, resources, and the environment itself to overcome adversity against all odds. At the end of time, you may be down, but you’re never out!
 
-## Installation
-
-There are three options for using this project; choose the one that's right for you.
 
 ## Contributing
 
 I used the following [link](https://www.geekering.com/programming-languages/filipesalgueiro/how-to-write-latex-documents-using-visual-studio-code/) to setup my local Visual Studio to build this repo.
 
 Pull requests are required to merge back to the main and require approval.
+
+If you are not tech savvy, feel free to make Github Issues detailing your request and somebody will be probably be glad to discuss it with you.
+
+## Setup
 
 ### Preparing a new release
 
