@@ -1,7 +1,8 @@
-# TimeStrike Rules
-## Features
+# TimeStrike
 
-* TimeStrike is an accessible miniatures wargame and Boss Battle Royale. With its first themed box set named Shadow of Fear, players will take turns managing a team of characters by moving them through the landscape and performing a variety of actions to survive the end of time and fight off a world boss.
+TimeStrike is an accessible miniatures wargame and Boss Battle Royale. With its first themed box set named Shadow of Fear, players will take turns managing a team of characters by moving them through the landscape and performing a variety of actions to survive the end of time and fight off a world boss.
+
+![plot](./img/map.gif)
 
 Universes collide as characters from ancient civilizations and distant futures reach the end of time. It is here that history ends, and your adventure begins. 
 
@@ -10,7 +11,25 @@ A malignant Sentience has pulled you into the TimeStrike, a land of decaying uni
 At its core, TimeStrike is a game about the enduring, adaptable, and fierce nature of the human spirit. It’s a game about managing relationships, resources, and the environment itself to overcome adversity against all odds. At the end of time, you may be down, but you’re never out!
 
 
+![minis](./img/source_ts_banner.png)
+
+
+The SOURCE system’s hexes and tiles were purpose-built to allow for in-game terrain modularity, with the unique biome artwork directly impacting gameplay.
+
+At the start of every TimeStrike game, players create the world in which they want to battle. This world is called the TimeScape, and it can be constructed without limitations. Mountains, rivers, lakes, forests, deserts, and any biome type can be used to construct the world.  Once the world is built, players place resources, roads, monsters, and to top it all off, the world boss.
+
+TimeStrike is a destructive realm where a great Sentience named Fear forces worlds to enter the same plane. The Sentience is the Boss of the plane, commanding and manipulating the remnants of time.
+
+For the heroes, every moment is a fight for the chance to return to their own timeline.
+
+Due to the nature of SOURCE, TimeStrike is a scalable game. Shadow of Fear box comes with everything needed for games of up to 3 players, but multiple sets and altered rules of TimeStrike can be combined to accommodate groups of any size.
+
+![firstbox](./img/firstbox.png)
+
+![minis](./img/minis.png)
+
 ## Contributing
+[![discord](./img/discord.png)](https://discord.gg/adventuretogether)
 
 I used the following [link](https://www.geekering.com/programming-languages/filipesalgueiro/how-to-write-latex-documents-using-visual-studio-code/) to setup my local Visual Studio to build this repo.
 
