@@ -3,7 +3,6 @@
 TimeStrike is an accessible miniatures wargame and Boss Battle Royale. With its first themed box set named Shadow of Fear, players will take turns managing a team of characters by moving them through the landscape and performing a variety of actions to survive the end of time and fight off a world boss.
 
 ![plot](./img/map.gif)
-![minis](./img/minis.png)
 
 Universes collide as characters from ancient civilizations and distant futures reach the end of time. It is here that history ends, and your adventure begins. 
 
@@ -27,7 +26,10 @@ Due to the nature of SOURCE, TimeStrike is a scalable game. Shadow of Fear box c
 
 ![firstbox](./img/firstbox.png)
 
+![minis](./img/minis.png)
+
 ## Contributing
+[![discord](./img/discord.png)](https://discord.gg/adventuretogether)
 
 I used the following [link](https://www.geekering.com/programming-languages/filipesalgueiro/how-to-write-latex-documents-using-visual-studio-code/) to setup my local Visual Studio to build this repo.
 
